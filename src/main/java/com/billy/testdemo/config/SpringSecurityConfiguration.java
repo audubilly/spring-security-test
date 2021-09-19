@@ -23,14 +23,14 @@ public class SpringSecurityConfiguration  extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-         auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
+         auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
          http.csrf().disable()
                  .authorizeRequests()
-                 .antMatchers("/admin").hasRole("Admin")
+                 .antMatchers("/admin").hasRole("ADMIN")
                  .antMatchers("/user").hasAnyRole("USER","ADMIN")
                  .and()
                  .httpBasic();

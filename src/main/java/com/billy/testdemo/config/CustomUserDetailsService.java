@@ -17,12 +17,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<SimpleGrantedAuthority> roles = null;
         if(username.equals("admin"))
         {
-            roles = List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            roles = Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
             return new User("admin","$2a$10$.ONLDYMHX6E6X.rfXOP9/ODLDczcnEmUZiZ7LFDZRjqypc/.g4s.W",roles);
         }
         if(username.equals("user"))
         {
-            roles = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+            roles = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
             return new User("user","$2a$10$wxVwv05XwvbCraMrZAlWO.CxV9TXskcmqEWSyp9htiXlyV2lLRBBi",roles);
         }
         throw new UsernameNotFoundException("user not found with this " + username + " username");
