@@ -59,7 +59,7 @@ public class JwtUtil {
     }
 
     public String getUsernameFromToken(String token){
-        Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody()
+        Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         return claims.getSubject();
     }
 
