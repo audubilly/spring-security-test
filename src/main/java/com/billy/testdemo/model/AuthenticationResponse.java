@@ -8,6 +8,7 @@ public class AuthenticationResponse {
     }
 
     public AuthenticationResponse(String token) {
+        super();
         this.token = token;
     }
 

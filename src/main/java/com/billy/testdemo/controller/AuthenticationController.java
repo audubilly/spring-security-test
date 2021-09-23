@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/")
 public class AuthenticationController {
 
     @Autowired
@@ -21,23 +22,22 @@ public class AuthenticationController {
     private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtUtil jwtTokenUtil ;
 
 
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+//    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+    @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequests authenticationRequests) throws Exception{
         try{
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    authenticationRequests.getUsername(),authenticationRequests.getPassword()
-            ));
-        }catch (DisabledException e){
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequests.getUsername(),authenticationRequests.getPassword()));
+         }catch (DisabledException e){
             throw new Exception("USER_DISABLED",e);
         }
         catch (BadCredentialsException e){
-            throw new Exception("IVALID_CREDENTIALS" , e );
+            throw new Exception("INVALID_CREDENTIALS" , e );
         }
-       UserDetails userDetails =  customUserDetailsService.loadUserByUsername(authenticationRequests.getUsername())
-        String token = jwtUtil.generateToken(userDetails);
+       UserDetails userDetails =  customUserDetailsService.loadUserByUsername(authenticationRequests.getUsername());
+        final String token = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new AuthenticationResponse(token));
     }
 }

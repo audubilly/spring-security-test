@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "jwt.expirationDateInMs",
+      "type": "java.lang.String",
+      "description": "Description for jwt.expirationDateInMs."
+  }
+] }
