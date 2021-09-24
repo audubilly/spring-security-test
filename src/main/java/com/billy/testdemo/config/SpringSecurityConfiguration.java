@@ -19,6 +19,12 @@ public class SpringSecurityConfiguration  extends WebSecurityConfigurerAdapter {
     @Autowired
     CustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    private CustomAuthenticationFilter customAuthenticationFilter;
+
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
