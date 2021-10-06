@@ -1,7 +1,9 @@
 package com.billy.testdemo.config;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -27,19 +29,23 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String jwtToken = extractJwtFromRequest(request);
+        try {
+            String jwtToken = extractJwtFromRequest(request);
 
-        if(StringUtils.hasText(jwtToken) && jwtUtil.validateToken(jwtToken)){
+            if (StringUtils.hasText(jwtToken) && jwtUtil.validateToken(jwtToken)) {
 
-            UserDetails userDetails = new User(jwtUtil.getUsernameFromToken(jwtToken),
-                    "", jwtUtil.getRolesFromToken(jwtToken) );
+                UserDetails userDetails = new User(jwtUtil.getUsernameFromToken(jwtToken),
+                        "", jwtUtil.getRolesFromToken(jwtToken));
 
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, "", jwtUtil.getRolesFromToken(jwtToken));
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, "", jwtUtil.getRolesFromToken(jwtToken));
 
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-        }else{
-            System.out.println("cannot set the security context");
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            } else {
+                System.out.println("cannot set the security context");
+            }
+        } catch (ExpiredJwtException | BadCredentialsException ex) {
+            request.setAttribute("exception", ex);
         }
         filterChain.doFilter(request, response);
     }

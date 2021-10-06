@@ -16,20 +16,34 @@ import java.util.Collections;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException authenticationException)
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authenticationException)
             throws IOException, ServletException {
-        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
+        Exception exception = (Exception) request.getAttribute("exception");
         String message;
 
-        if(authenticationException.getCause() != null){
-            message = authenticationException.getCause().toString() + " " + authenticationException.getMessage();
-        }else{
-            message = authenticationException.getMessage();
+        if (exception != null) {
+            if (exception.getCause() != null) {
+                message = exception.getCause().toString() + " " + exception.getMessage();
+            } else {
+                message = exception.getMessage();
+            }
+            byte[] body = new ObjectMapper()
+                    .writeValueAsBytes(Collections.singletonMap("error", message));
+            response.getOutputStream().write(body);
+
+        } else {
+
+            if (authenticationException.getCause() != null) {
+                message = authenticationException.getCause().toString() + " " + authenticationException.getMessage();
+            } else {
+                message = authenticationException.getMessage();
+            }
+            byte[] body = new ObjectMapper()
+                    .writeValueAsBytes(Collections.singletonMap("error", message));
+            response.getOutputStream().write(body);
         }
-         byte [] body = new ObjectMapper()
-                 .writeValueAsBytes(Collections.singletonMap("error",message));
-        httpServletResponse.getOutputStream().write(body);
     }
 }
