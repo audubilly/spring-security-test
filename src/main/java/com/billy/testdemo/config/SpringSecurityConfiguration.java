@@ -27,6 +27,7 @@ public class SpringSecurityConfiguration  extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
+    @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
@@ -47,7 +48,7 @@ public class SpringSecurityConfiguration  extends WebSecurityConfigurerAdapter {
                  .authorizeRequests()
                  .antMatchers("/admin").hasRole("ADMIN")
                  .antMatchers("/user").hasAnyRole("USER","ADMIN")
-                 .antMatchers("/authenticate").permitAll().anyRequest().authenticated()
+                 .antMatchers("/authenticate","/register").permitAll().anyRequest().authenticated()
                  .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                  .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                  .and().addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
